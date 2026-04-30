@@ -28,11 +28,6 @@ jobs:
 
       - name: Setup Snyk
         uses: snyk/actions/setup@master
-      
-      - name: Snyk monitor (dashboard upload)
-        run: snyk monitor --org=rannez
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Install Syft
         run: |
@@ -42,6 +37,11 @@ jobs:
         run: |
           qmake
           make
+
+      - name: Snyk monitor (C/C++ scan)
+        run: snyk monitor --unmanaged --all-projects --org=rannez
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Generate SBOM
         run: syft . -o cyclonedx-json > sbom.json
