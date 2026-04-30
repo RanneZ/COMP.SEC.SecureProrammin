@@ -34,3 +34,6 @@ jobs:
         run: |
           qmake
           make
+
+      - name: Generate SBOM
+        run: syft . -o cyclonedx-json > sbom.json
