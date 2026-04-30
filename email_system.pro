@@ -25,9 +25,16 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-# === Crypto++ setup ===
-INCLUDEPATH += C:/Users/teemu/vcpkg/installed/x64-mingw-static/include
-LIBS += -LC:/Users/teemu/vcpkg/installed/x64-mingw-static/lib -lcryptopp
+# === Crypto++ setup (cross-platform) ===
+win32 {
+    INCLUDEPATH += C:/Users/teemu/vcpkg/installed/x64-mingw-static/include
+    LIBS += -LC:/Users/teemu/vcpkg/installed/x64-mingw-static/lib -lcryptopp
+}
+
+unix {
+    LIBS += -lcryptopp
+}
+
 DEFINES += CRYPTOPP_ENABLE_NAMESPACE_WEAK
 
 HEADERS += \
