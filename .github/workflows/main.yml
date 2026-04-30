@@ -26,6 +26,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libcrypto++-dev
 
+      - name: Snyk authenticate
+        run: snyk auth $SNYK_TOKEN
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      
+      - name: Snyk monitor (dashboard upload)
+        run: snyk monitor --org=rannez
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
