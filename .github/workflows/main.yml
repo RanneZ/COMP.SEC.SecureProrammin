@@ -43,13 +43,13 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Run Trivy vulnerability scanner on rootfs
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: 'rootfs'
-          scan-ref: '/'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-
       - name: Generate SBOM
         run: syft . -o cyclonedx-json > sbom.json
+
+      - name: Run Trivy vulnerability scanner on SBOM
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: 'sbom'
+          scan-ref: 'sbom.json'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
