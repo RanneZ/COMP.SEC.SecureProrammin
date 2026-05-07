@@ -7,8 +7,11 @@ bool saveUser(const std::string& fileName, User& user){
     std::ifstream file(fileName);
     nlohmann::json j;
 
-    if(file) file >> j;
-    else j = nlohmann::json::array();
+    if (!file || file.peek() == EOF) {
+        j = nlohmann::json::array();
+    } else {
+        file >> j;
+    }
 
     bool found = false;
 
@@ -34,7 +37,7 @@ bool saveUser(const std::string& fileName, User& user){
 User loadUser(const std::string& fileName, std::string& username){
     std::ifstream file(fileName);
     User nulluser;
-    if(!file) return nulluser;
+    if(!file || file.peek() == EOF) return nulluser;
 
     nlohmann::json j;
     file >> j;

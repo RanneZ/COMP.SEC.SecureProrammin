@@ -1,4 +1,4 @@
-QT = core
+QT = core network
 
 CONFIG += c++17 cmdline
 
@@ -10,6 +10,7 @@ SOURCES += \
         commands.cpp \
         cryp.cpp \
         datastructures.cpp \
+        email.cpp \
         input.cpp \
         jsonconverter.cpp \
         main.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     commands.h \
     cryp.h \
     datastructures.h \
+    email.h \
     input.h \
     jsonconverter.h \
     saveandload.h \

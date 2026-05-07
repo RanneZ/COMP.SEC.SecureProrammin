@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include "datastructures.h"
+#include "email.h"
 
 struct Cmd {
     std::string name;

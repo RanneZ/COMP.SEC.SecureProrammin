@@ -4,10 +4,12 @@
 #include "ui.h"
 #include "commands.h"
 #include "datastructures.h"
+#include "email.h"
 
 int main(){
     std::cout << "\033[0m";
-    auto data = datastructures();
+    auto mail = email();
+    auto data = datastructures(mail);
     auto cmds = create_cmds(data);
 
     std::string pageTitle = "WELCOME TO THE MAIL SYSTEM";

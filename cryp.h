@@ -10,5 +10,6 @@ struct hashSalt{
 
 hashSalt hash_and_salt_password(std::string password);
 bool authenticate(std::string inputPassword, hashSalt hashAndSalt);
+std::string random6NumberCode();
 
 #endif // CRYP_H

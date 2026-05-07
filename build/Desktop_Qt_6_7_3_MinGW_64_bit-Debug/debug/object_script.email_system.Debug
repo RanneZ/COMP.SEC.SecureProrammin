@@ -1,0 +1,10 @@
+debug/commands.o
+debug/cryp.o
+debug/datastructures.o
+debug/email.o
+debug/input.o
+debug/jsonconverter.o
+debug/main.o
+debug/saveandload.o
+debug/ui.o
+debug/validation.o

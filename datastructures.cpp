@@ -8,7 +8,9 @@
 #include "Config.h"
 
 
-datastructures::datastructures() {}
+datastructures::datastructures(email email) {
+    emailHandler = email;
+}
 
 datastructures::~datastructures(){
 
@@ -103,10 +105,45 @@ void datastructures::create_new_user(){
         std::cout << "Email: ";
     }
 
+    std::string email = line;
+
+    while(true){
+        std::cout << "Emails App Password: ";
+        line = passInput();
+
+        if(line == "quit")return;
+
+        if(!checkPassLength(line)){
+            std::cout << "Too long or too short password!" << std::endl;
+        } else {
+            pass = line;
+            break;
+        }
+    }
+
+    // hash and salt the email app password
+    newHashSalt = hash_and_salt_password(pass);
+    //pass = "";
+    newUser.emailPassHash = newHashSalt.hash;
+    newUser.emailPassSalt = newHashSalt.salt;
+
     // +
     // check that Email is not in use
     // send email to the email addres that have validation code
     // +
+
+
+    std::string subject = "Mail system validation code";
+    std::string code = random6NumberCode();
+    std::string message = "Here is the validation code \n\n"+ code;
+
+    emailHandler.sendEmail(email,
+                           pass,
+                           email,
+                           subject,
+                           message);
+    pass = "";
+
 
     int attemptsLeft = 5;
     std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
@@ -114,7 +151,7 @@ void datastructures::create_new_user(){
     while (getline(std::cin, line)){
         if(line == "quit")return;
 
-        if (line != "123456"){ // change to generated validation code not this !!!!!!
+        if (line != code){
             attemptsLeft = attemptsLeft - 1;
             if(attemptsLeft <= 0){
                 std::cout << "Too many attempts! exiting Sign in" << std::endl;
@@ -127,6 +164,8 @@ void datastructures::create_new_user(){
         std::cout << "Validation code: ";
     }
 
+    newUser.email = email;
+
 
     if(saveUser(USERSFILE, newUser)){
         std::cout << " you have succesfully sign in! \n (type 'log_in " << newUser.username << "' if you want to log in)" << std::endl;
@@ -137,7 +176,7 @@ void datastructures::create_new_user(){
 
 }
 
-
+// tee
 void datastructures::load_existing_user(std::string usernameOrEmail)
 {
     bool isEmail;

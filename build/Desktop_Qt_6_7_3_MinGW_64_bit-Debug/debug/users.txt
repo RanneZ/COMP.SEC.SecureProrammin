@@ -1,0 +1,13 @@
+[
+    {
+        "contacts": [],
+        "email": "teemuranne92@gmail.com",
+        "emailPassHash": "B43E860107A991B4CAEC2FF9B983DED94B5929764DAE27E047C7DB9B956CAC02",
+        "emailPassSalt": "F455565D3801752FF51247073B99065C",
+        "inbox": [],
+        "passwordHash": "A32382596C8CB0B3B698F90119E93529EDB77C0F7C0C5D3053D3DDB8566F0BE4",
+        "passwordSalt": "8C4CF2B83C752BAD8CC45F085EECA4B4",
+        "sent": [],
+        "username": "teemu"
+    }
+]

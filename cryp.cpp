@@ -41,3 +41,17 @@ bool authenticate(std::string inputPassword, hashSalt hashAndSalt){
         return false;
     }
 }
+
+std::string random6NumberCode(){
+    CryptoPP::AutoSeededRandomPool rng;
+    std::string code = "";
+
+    for(int i = 0; i < 6; ++i) {
+        CryptoPP::byte digit;
+        // Haetaan satunnainen tavu ja skaalataan se välille 0-9
+        rng.GenerateBlock(&digit, 1);
+        code += std::to_string(digit % 10);
+    }
+
+    return code;
+}

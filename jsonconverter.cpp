@@ -35,6 +35,8 @@ void to_json(nlohmann::json& j, const User& u) {
     j = nlohmann::json{
         {"username", u.username},
         {"email", u.email},
+        {"emailPassHash", u.emailPassHash},
+        {"emailPassSalt", u.emailPassSalt},
         {"passwordHash", u.passwordHash},
         {"passwordSalt", u.passwordSalt},
         {"inbox", u.inbox},
@@ -46,6 +48,8 @@ void to_json(nlohmann::json& j, const User& u) {
 void from_json(const nlohmann::json& j, User& u) {
     u.username = j.value("username", "");
     u.email = j.value("email", "");
+    u.emailPassHash = j.value("emailPassHash", "");
+    u.emailPassSalt = j.value("emailPassSalt", "");
     u.passwordHash = j.value("passwordHash", "");
     u.passwordSalt = j.value("passwordSalt", "");
     u.inbox = j.value("inbox", std::vector<Message>{});

@@ -1,0 +1,10 @@
+release/commands.o
+release/cryp.o
+release/datastructures.o
+release/email.o
+release/input.o
+release/jsonconverter.o
+release/main.o
+release/saveandload.o
+release/ui.o
+release/validation.o
