@@ -48,4 +48,5 @@ HEADERS += \
     jsonconverter.h \
     saveandload.h \
     ui.h \
-    validation.h
+    validation.h \
+    dangerous_passwords.h

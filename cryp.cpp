@@ -55,3 +55,13 @@ std::string random6NumberCode(){
 
     return code;
 }
+
+std::string hashString(std::string string)
+{
+    // hashing the string
+    std::string hash;
+    CryptoPP::SHA256 sha;
+    CryptoPP::StringSource(string, true, new CryptoPP::HashFilter(sha, new CryptoPP::HexEncoder(new CryptoPP::StringSink(hash))));
+
+    return hash;
+}

@@ -38,7 +38,7 @@ bool email::sendEmail(const std::string &from,
 
     sendCommand(socket, "EHLO localhost");
 
-    // login to the ms outlook?
+    // login to the email
     sendCommand(socket, "AUTH LOGIN");
     sendCommand(socket, QByteArray::fromStdString(from).toBase64().toStdString());
     sendCommand(socket, QByteArray::fromStdString(pass).toBase64().toStdString());

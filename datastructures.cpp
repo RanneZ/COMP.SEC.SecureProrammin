@@ -67,8 +67,8 @@ void datastructures::create_new_user(){
 
         if(line == "quit")return;
 
-        if(!checkPassLength(line)){
-            std::cout << "Too long or too short password!" << std::endl;
+        if(!checkPass(line, newUser.username)){
+
         } else {
             pass = line;
             break;
@@ -113,8 +113,7 @@ void datastructures::create_new_user(){
 
         if(line == "quit")return;
 
-        if(!checkPassLength(line)){
-            std::cout << "Too long or too short password!" << std::endl;
+        if(!checkPass(line, newUser.username)){
         } else {
             pass = line;
             break;
