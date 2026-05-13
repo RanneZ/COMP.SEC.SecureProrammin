@@ -7,16 +7,16 @@ CONFIG += c++17 cmdline
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        commands.cpp \
-        cryp.cpp \
-        datastructures.cpp \
-        email.cpp \
-        input.cpp \
-        jsonconverter.cpp \
-        main.cpp \
-        saveandload.cpp \
-        ui.cpp \
-        validation.cpp
+        Commands.cpp \
+        Cryp.cpp \
+        Datastructures.cpp \
+        Email.cpp \
+        Input.cpp \
+        JsonConverter.cpp \
+        SaveAndLoad.cpp \
+        UI.cpp \
+        Validation.cpp \
+        main.cpp
 
 # === nlohmann/json ===
 INCLUDEPATH += $$PWD/libs/nlohmann
@@ -39,14 +39,14 @@ unix {
 DEFINES += CRYPTOPP_ENABLE_NAMESPACE_WEAK
 
 HEADERS += \
+    Commands.h \
     Config.h \
-    commands.h \
-    cryp.h \
-    datastructures.h \
-    email.h \
-    input.h \
-    jsonconverter.h \
-    saveandload.h \
-    ui.h \
-    validation.h \
-    dangerous_passwords.h
+    Cryp.h \
+    DangerousPasswords.h \
+    Datastructures.h \
+    Email.h \
+    Input.h \
+    JsonConverter.h \
+    SaveAndLoad.h \
+    UI.h \
+    Validation.h

@@ -1,5 +1,5 @@
-#include "jsonconverter.h"
-#include "datastructures.h"
+#include "JsonConverter.h"
+#include "Datastructures.h"
 
 void to_json(nlohmann::json& j, const Message& m) {
     j = nlohmann::json{

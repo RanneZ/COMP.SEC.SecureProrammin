@@ -1,12 +1,12 @@
-#include "validation.h"
-#include "dangerous_passwords.h"
+#include "Validation.h"
+#include "DangerousPasswords.h"
 #include <unordered_set>
 #include <iostream>
-#include "cryp.h"
+#include "Cryp.h"
 #include <regex>
 
 bool validateUserName(const std::string &username){
-    std::regex pattern("^[a-zA-Z](?!.*[._]{2})[a-zA-Z0-9._]{1,18}[a-zA-Z]");
+    std::regex pattern("^[a-zA-Z](?!.*[._]{2})[a-zA-Z0-9._]{1,18}[a-zA-Z]$");
     if(!std::regex_match(username, pattern)) return false;
 
     return true;
@@ -29,6 +29,13 @@ bool validEmail(const std::string& email){
 
     if(!regex_match(local, localPattern)) return false;
     if(!regex_match(domain, domainPattern)) return false;
+
+    return true;
+}
+
+bool validate6DigitCode(const std::string& code){
+    std::regex pattern("^[0-9]{6}");
+    if(!std::regex_match(code, pattern)) return false;
 
     return true;
 }
@@ -95,9 +102,60 @@ bool checkPass(const std::string& password, const std::string& username){
 
 }
 
+bool emailCodeValidation(const std::string& emailAddres, const std::string& emailPass){
 
+    std::string code = random6NumberCode();
+    std::string line;
 
+    // create email
+    emailContent content;
+    content.from = emailAddres;
+    content.pass = emailPass;
+    content.to = emailAddres;
+    content.subject = "Mail system validation code";
+    content.message = "Here is the validation code \n\n"+ code;
 
+    if(!sendEmail(content)){
+        // comment
+        return false;
+    }
 
+    int attemptsLeft = 5;
+    std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
+    std::cout << "Validation code: ";
+    while (getline(std::cin, line)){
+        if(line == "quit")return false;
 
+        if (!validate6DigitCode(line)){
+            std::cout << "Wrong amount digits \n code is 6 digit long" << std::endl;
+        } else {
+            if (line != code){
+                attemptsLeft = attemptsLeft - 1;
+                if(attemptsLeft <= 0){
+                    std::cout << "Too many attempts! exiting Sign in" << std::endl;
+                    return false;
+                }
+                std::cout << "Invalid validation code! "<< attemptsLeft <<" attempts remaining" << std::endl;
+            } else {
+                break;
+            }
+        }
+        std::cout << "Validation code: ";
+    }
 
+    return true;
+}
+
+bool checkPasswordsMatches(const std::string &password, const std::string &repassword){
+    if (password == repassword) return true;
+    std::cout << "Confirm password do not match with password!" << std::endl;
+    return false;
+}
+
+bool checkUsernameDosentExist(const std::string &username){
+
+}
+
+bool checkEmailAddresDosentExist(const std::string &emailAddres){
+
+}

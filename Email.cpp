@@ -1,13 +1,7 @@
-#include "email.h"
+#include "Email.h"
 #include <iostream>
 
-email::email() {}
-
-bool email::sendEmail(const std::string &from,
-                      const std::string &pass,
-                      const std::string &to,
-                      const std::string &subject,
-                      const std::string &message){
+bool sendEmail(const emailContent& content){
 
     QSslSocket socket;
 
@@ -40,16 +34,16 @@ bool email::sendEmail(const std::string &from,
 
     // login to the email
     sendCommand(socket, "AUTH LOGIN");
-    sendCommand(socket, QByteArray::fromStdString(from).toBase64().toStdString());
-    sendCommand(socket, QByteArray::fromStdString(pass).toBase64().toStdString());
+    sendCommand(socket, QByteArray::fromStdString(content.from).toBase64().toStdString());
+    sendCommand(socket, QByteArray::fromStdString(content.pass).toBase64().toStdString());
 
     // Email setup
-    sendCommand(socket, "MAIL FROM:<" + from + ">");
-    sendCommand(socket, "RCPT TO:<" + to + ">");
+    sendCommand(socket, "MAIL FROM:<" + content.from + ">");
+    sendCommand(socket, "RCPT TO:<" + content.to + ">");
     sendCommand(socket, "DATA");
 
     // Message
-    std::string data = "Subject: "+ subject +"\r\n""\r\n"+ message + "\r\n.";
+    std::string data = "Subject: "+ content.subject +"\r\n""\r\n"+ content.message + "\r\n.";
 
     sendCommand(socket, data);
 
@@ -61,7 +55,7 @@ bool email::sendEmail(const std::string &from,
 
 }
 
-void email::sendCommand(QSslSocket& socket, const std::string& command){
+void sendCommand(QSslSocket& socket, const std::string& command){
     std::cout << "CLIENT: " << command << std::endl;
     QString qCommand = QString::fromStdString(command);
 

@@ -1,19 +1,24 @@
-#include "datastructures.h"
-#include "saveandload.h"
+#include "Datastructures.h"
+#include "SaveAndLoad.h"
 #include <iostream>
-#include "ui.h"
-#include "validation.h"
-#include "input.h"
-#include "cryp.h"
+#include "UI.h"
+#include "Validation.h"
+#include "Input.h"
+#include "Cryp.h"
 #include "Config.h"
 
 
-datastructures::datastructures(email email) {
-    emailHandler = email;
+datastructures::datastructures(){
+    users = loadUsers(USERSFILE);
+    std::cout << "Load users" << std::endl;
+    for (User& user : users){
+        std::cout << "user: " << user.username << std::endl;
+    }
+
 }
 
 datastructures::~datastructures(){
-
+    saveUsers(USERSFILE, users);
 }
 
 Message datastructures::create_email(){
@@ -34,7 +39,7 @@ Contact datastructures::get_contact(std::string contactName){
 // not ready
 void datastructures::create_new_user(){
     User newUser;
-    std::string line;
+    std::string inputLine;
     std::string pass;
 
     std::cout << "Create new user:" << std::endl;
@@ -46,58 +51,33 @@ void datastructures::create_new_user(){
     space();
     std::cout << "User name must start with letter and can not have two or more '.' or '_' row" << std::endl;
     space();
-    std::cout << "Username: ";
 
-    while (getline(std::cin, line)){
-        if(line == "quit")return;
+    // ask username
+    inputLine = askUserName();
+    if(inputLine == "quit") return;
 
-        if (!validateUserName(line)){
-            std::cout << "Invalid username (containe one or more unalowed charater)" << std::endl;
-        } else {
-            break;
-        }
-        std::cout << "Username: ";
-    }
+    newUser.username = inputLine;
 
-     newUser.username = line;
+    // ask password
+    inputLine = askPassword(newUser.username);
+    if(inputLine == "quit") return;
+    pass = inputLine;
 
-    while(true){
-        std::cout << "Password: ";
-        line = passInput();
+    // ask password again and check it matches with previous
+    inputLine = reaskPassword(pass);
+    if(inputLine == "quit") return;
 
-        if(line == "quit")return;
-
-        if(!checkPass(line, newUser.username)){
-
-        } else {
-            pass = line;
-            break;
-        }
-    }
-
-    while(true){
-        std::cout << "Confirm Password: ";
-        line = passInput();
-
-        if(line == "quit")return;
-
-        if(line != pass){
-            std::cout << "Confirm password do not match with password!" << std::endl;
-        } else {
-            break;
-        }
-    }
-
+    // hash and salt the password and store password hash and salt
     hashSalt newHashSalt = hash_and_salt_password(pass);
     pass = "";
     newUser.passwordHash = newHashSalt.hash;
     newUser.passwordSalt = newHashSalt.salt;
 
     std::cout << "Email: ";
-    while (getline(std::cin, line)){
-        if(line == "quit")return;
+    while (getline(std::cin, inputLine)){
+        if(inputLine == "quit")return;
 
-        if (!validEmail(line)){
+        if (!validEmail(inputLine)){
             std::cout << "Invalid email address!" << std::endl;
         } else {
             break;
@@ -105,68 +85,34 @@ void datastructures::create_new_user(){
         std::cout << "Email: ";
     }
 
-    std::string email = line;
+    std::string email = inputLine;
 
     while(true){
         std::cout << "Emails App Password: ";
-        line = passInput();
+        inputLine = passInput();
 
-        if(line == "quit")return;
+        if(inputLine == "quit")return;
 
-        if(!checkPass(line, newUser.username)){
+        if(!checkPass(inputLine, newUser.username)){
         } else {
-            pass = line;
+            pass = inputLine;
             break;
         }
     }
 
     // hash and salt the email app password
     newHashSalt = hash_and_salt_password(pass);
-    //pass = "";
     newUser.emailPassHash = newHashSalt.hash;
     newUser.emailPassSalt = newHashSalt.salt;
 
-    // +
-    // check that Email is not in use
-    // send email to the email addres that have validation code
-    // +
-
-
-    std::string subject = "Mail system validation code";
-    std::string code = random6NumberCode();
-    std::string message = "Here is the validation code \n\n"+ code;
-
-    emailHandler.sendEmail(email,
-                           pass,
-                           email,
-                           subject,
-                           message);
+    if(!emailCodeValidation(email, pass)) return;
     pass = "";
-
-
-    int attemptsLeft = 5;
-    std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
-    std::cout << "Validation code: ";
-    while (getline(std::cin, line)){
-        if(line == "quit")return;
-
-        if (line != code){
-            attemptsLeft = attemptsLeft - 1;
-            if(attemptsLeft <= 0){
-                std::cout << "Too many attempts! exiting Sign in" << std::endl;
-                return;
-            }
-            std::cout << "Invalid validation code! "<< attemptsLeft <<" attempts remaining" << std::endl;
-        } else {
-            break;
-        }
-        std::cout << "Validation code: ";
-    }
 
     newUser.email = email;
 
+    users.push_back(newUser);
 
-    if(saveUser(USERSFILE, newUser)){
+    if(saveUsers(USERSFILE, users)){
         std::cout << " you have succesfully sign in! \n (type 'log_in " << newUser.username << "' if you want to log in)" << std::endl;
     }
     else {
@@ -181,14 +127,15 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
     bool isEmail;
     std::string line;
     std::string pass;
+    User userTemp;
+
+    remove_current_user();
 
     if (validEmail(usernameOrEmail)){
         isEmail = true;
-    }
-    else if (validateUserName(usernameOrEmail)){
+    } else if (validateUserName(usernameOrEmail)){
         isEmail = false;
-    }
-    else {
+    } else {
         std::cout << "\nNot valid username or email. Please try again type 'log_in <valid username or email>'\n";
         return;
     }
@@ -209,16 +156,46 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
         }
     }
 
-    User user = loadUser(USERSFILE, usernameOrEmail);
+    if(isEmail){
+        for (User& user : users) {
+            if (user.email == usernameOrEmail){
+                userTemp = user;
+                break;
+            }
+        }
+    } else {
+        for (User& user : users) {
+            if (user.username == usernameOrEmail){
+                userTemp = user;
+                break;
+            }
+        }
+    }
+
+    if(isEmail){
+        if(userTemp.email != usernameOrEmail){
+            std::cout << " log in has failed! wrong username or password" << std::endl;
+            return;
+        }
+    } else {
+        if(userTemp.username != usernameOrEmail){
+            std::cout << " log in has failed! wrong username or password" << std::endl;
+            return;
+        }
+    }
+
+    /*
+    User user = loadUser(USERSFILE, usernameOrEmail, isEmail);
     if(user.username == ""){
         std::cout << " log in has failed! wrong username or password" << std::endl;
         return;
     }
+    */
 
-    hashSalt userHashSalt = {user.passwordHash, user.passwordSalt};
+    hashSalt userHashSalt = {userTemp.passwordHash, userTemp.passwordSalt};
 
     if(authenticate(pass, userHashSalt)){
-        set_current_user(user);
+        set_current_user(userTemp);
         pageHeader("WELCOME TO THE MAIL SYSTEM", get_current_user().username);
     } else {
         std::cout << " log in has failed! wrong username or password" << std::endl;

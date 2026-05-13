@@ -1,10 +1,11 @@
-#include "commands.h"
+#include "Commands.h"
 #include <iostream>
 
 std::vector<Cmd> create_cmds(datastructures& data) {
 
     static std::string emailidx = "([a-zA-Z0-9-]+)";
-    static std::string usernamex = "([a-zA-Z0-9-]+)";
+    static std::string usernamex = "([a-zA-Z](?!.*[._]{2})[a-zA-Z0-9._]{1,18}[a-zA-Z])";
+    static std::string userEmailx = "([a-zA-Z0-9._-]+@(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z]{2,})";
     //std::string coordx = "\\(([0-9]+),([0-9]+)\\)";
     //std::string numx = "([0-9]+)";
     static std::string ws = "\\s+";
@@ -53,6 +54,14 @@ std::vector<Cmd> create_cmds(datastructures& data) {
         {
             "log_in",
             std::regex("^log_in"+ ws + usernamex + "$" ),
+            [&](const std::smatch& match){
+                std::cout << "Log in user: " << match[1] << std::endl;
+                data.load_existing_user(match[1]);
+            }
+        },
+        {
+            "log_in",
+            std::regex("^log_in"+ ws + userEmailx + "$" ),
             [&](const std::smatch& match){
                 std::cout << "Log in user: " << match[1] << std::endl;
                 data.load_existing_user(match[1]);

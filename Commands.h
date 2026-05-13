@@ -5,8 +5,8 @@
 #include <functional>
 #include <vector>
 #include <string>
-#include "datastructures.h"
-#include "email.h"
+#include "Datastructures.h"
+#include "Email.h"
 
 struct Cmd {
     std::string name;

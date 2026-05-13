@@ -1,15 +1,14 @@
 #include <iostream>
 //#include <fstream>
 #include <string>
-#include "ui.h"
-#include "commands.h"
-#include "datastructures.h"
-#include "email.h"
+#include "UI.h"
+#include "Commands.h"
+#include "Datastructures.h"
+#include "Email.h"
 
 int main(){
     std::cout << "\033[0m";
-    auto mail = email();
-    auto data = datastructures(mail);
+    auto data = datastructures();
     auto cmds = create_cmds(data);
 
     std::string pageTitle = "WELCOME TO THE MAIL SYSTEM";

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <ctime>
-#include "email.h"
+#include "Email.h"
 
 struct Message {
     std::string sender;
@@ -37,7 +37,7 @@ class datastructures
 {
 public:
 
-    datastructures(email email);
+    datastructures();
     ~datastructures();
     Message create_email();
     void create_contact();
@@ -52,9 +52,8 @@ public:
     void remove_current_user();
 
 private:
+    std::vector<User> users;
     User currentUser;
-    email emailHandler;
-
 };
 
 #endif // DATASTRUCTURES_H

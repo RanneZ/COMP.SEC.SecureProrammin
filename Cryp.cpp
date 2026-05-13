@@ -1,4 +1,4 @@
-#include "cryp.h"
+#include "Cryp.h"
 #include <cryptopp/osrng.h>
 #include <cryptopp/sha.h>
 #include <cryptopp/hex.h>
