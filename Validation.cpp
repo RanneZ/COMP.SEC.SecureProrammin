@@ -33,6 +33,19 @@ bool validEmail(const std::string& email){
     return true;
 }
 
+bool validateSubject(const std::string& subject){
+    std::regex pattern(R"(^[^\x00-\x1F\x7F\r\n]{1,200}$)");
+    if(!std::regex_match(subject, pattern)) return false;
+
+    return true;
+}
+
+bool validateMessage(const std::string& message){
+    if(message.size() > 10000) return false;
+
+    return message.find('\0') == std::string::npos;
+}
+
 bool validate6DigitCode(const std::string& code){
     std::regex pattern("^[0-9]{6}");
     if(!std::regex_match(code, pattern)) return false;
@@ -102,29 +115,32 @@ bool checkPass(const std::string& password, const std::string& username){
 
 }
 
-bool emailCodeValidation(const std::string& emailAddres, const std::string& emailPass){
+ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::string& emailPass){
 
     std::string code = random6NumberCode();
     std::string line;
+    std::vector<std::string> to;
+    to.push_back(emailAddres);
 
     // create email
     emailContent content;
     content.from = emailAddres;
     content.pass = emailPass;
-    content.to = emailAddres;
+    content.to = to;
     content.subject = "Mail system validation code";
     content.message = "Here is the validation code \n\n"+ code;
 
     if(!sendEmail(content)){
         // comment
-        return false;
+        //std::cout << "+ Log in failed +" << std::endl;
+        return AUTHFAIL;
     }
 
     int attemptsLeft = 5;
     std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
     std::cout << "Validation code: ";
     while (getline(std::cin, line)){
-        if(line == "quit")return false;
+        if(line == "quit")return QUIT;
 
         if (!validate6DigitCode(line)){
             std::cout << "Wrong amount digits \n code is 6 digit long" << std::endl;
@@ -133,7 +149,7 @@ bool emailCodeValidation(const std::string& emailAddres, const std::string& emai
                 attemptsLeft = attemptsLeft - 1;
                 if(attemptsLeft <= 0){
                     std::cout << "Too many attempts! exiting Sign in" << std::endl;
-                    return false;
+                    return CODEFAIL;
                 }
                 std::cout << "Invalid validation code! "<< attemptsLeft <<" attempts remaining" << std::endl;
             } else {
@@ -143,7 +159,7 @@ bool emailCodeValidation(const std::string& emailAddres, const std::string& emai
         std::cout << "Validation code: ";
     }
 
-    return true;
+    return SUCCESS;
 }
 
 bool checkPasswordsMatches(const std::string &password, const std::string &repassword){
@@ -152,10 +168,4 @@ bool checkPasswordsMatches(const std::string &password, const std::string &repas
     return false;
 }
 
-bool checkUsernameDosentExist(const std::string &username){
 
-}
-
-bool checkEmailAddresDosentExist(const std::string &emailAddres){
-
-}

@@ -4,9 +4,23 @@
 #include "UI.h"
 #include "Commands.h"
 #include "Datastructures.h"
-#include "Email.h"
+//#include "Email.h"
+#include <windows.h>
+
+LONG WINAPI NoDumpFilter(EXCEPTION_POINTERS* p){
+    ExitProcess(1);
+    return EXCEPTION_EXECUTE_HANDLER;
+}
 
 int main(){
+
+    SetUnhandledExceptionFilter(NoDumpFilter);
+    SetErrorMode(
+        SEM_FAILCRITICALERRORS |
+        SEM_NOGPFAULTERRORBOX |
+        SEM_NOOPENFILEERRORBOX
+    );
+
     std::cout << "\033[0m";
     auto data = datastructures();
     auto cmds = create_cmds(data);

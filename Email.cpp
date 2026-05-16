@@ -4,6 +4,7 @@
 bool sendEmail(const emailContent& content){
 
     QSslSocket socket;
+    std::string responseStr;
 
     // connect to the smtp servise
     socket.connectToHost("smtp.gmail.com", 587);
@@ -33,13 +34,30 @@ bool sendEmail(const emailContent& content){
     sendCommand(socket, "EHLO localhost");
 
     // login to the email
-    sendCommand(socket, "AUTH LOGIN");
-    sendCommand(socket, QByteArray::fromStdString(content.from).toBase64().toStdString());
-    sendCommand(socket, QByteArray::fromStdString(content.pass).toBase64().toStdString());
+    responseStr = sendCommand(socket, "AUTH LOGIN");
+    if (responseStr.substr(0, 3) != "334") {
+        std::cout << "AUTH LOGIN rejected" << std::endl;;
+        return false;
+    }
+    responseStr = sendCommand(socket, QByteArray::fromStdString(content.from).toBase64().toStdString());
+    if (responseStr.substr(0, 3) != "334") {
+        std::cout << "Username rejected\n";
+        return false;
+    }
+    responseStr = sendCommand(socket, QByteArray::fromStdString(content.pass).toBase64().toStdString());
+    if (responseStr.substr(0, 3) == "235") {
+        std::cout << "Login successful\n";
+    }
+    else {
+        std::cout << "Login failed\n";
+        return false;
+    }
 
     // Email setup
     sendCommand(socket, "MAIL FROM:<" + content.from + ">");
-    sendCommand(socket, "RCPT TO:<" + content.to + ">");
+    for (const auto& recipient : content.to) {
+        sendCommand(socket, "RCPT TO:<" + recipient + ">");
+    }
     sendCommand(socket, "DATA");
 
     // Message
@@ -55,7 +73,7 @@ bool sendEmail(const emailContent& content){
 
 }
 
-void sendCommand(QSslSocket& socket, const std::string& command){
+std::string sendCommand(QSslSocket& socket, const std::string& command){
     std::cout << "CLIENT: " << command << std::endl;
     QString qCommand = QString::fromStdString(command);
 
@@ -64,5 +82,9 @@ void sendCommand(QSslSocket& socket, const std::string& command){
     socket.waitForReadyRead();
 
     QByteArray response = socket.readAll();
+    std::string responseStr = response.toStdString();
+
     std::cout << "SERVER: " << response.toStdString() << std::endl;
+
+    return responseStr;
 }

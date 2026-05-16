@@ -1,6 +1,5 @@
 #ifndef CRYP_H
 #define CRYP_H
-#include <vector>
 #include <string>
 
 struct hashSalt{

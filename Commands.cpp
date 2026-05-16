@@ -22,9 +22,10 @@ std::vector<Cmd> create_cmds(datastructures& data) {
         {
             "send_email",
             std::regex("^send_email"),
-            [](const std::smatch& match){
+            [&](const std::smatch& match){
                 std::cout << "Send message!" << std::endl;
                 // run function here
+                data.create_email();
             }
         },
         {

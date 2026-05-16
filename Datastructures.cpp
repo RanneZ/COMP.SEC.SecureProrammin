@@ -21,9 +21,98 @@ datastructures::~datastructures(){
     saveUsers(USERSFILE, users);
 }
 
-Message datastructures::create_email(){
-    Message message;
-    return message;
+// create email and then sends it
+void datastructures::create_email(){
+    if(!isSignIn()) return;
+
+    std::vector<std::string> validAddresess;
+    std::vector<std::string> invalidAddresess;
+    std::string inputLine;
+    char delimiter = ' ';
+
+    std::cout << "Recipient(s) email address or contact name" << std::endl;
+    std::cout << "Recipient(s): ";
+    getline(std::cin, inputLine);
+    if(inputLine == "quit") return;
+
+    std::vector<std::string> addresess = datastructures::split(inputLine, delimiter, true);
+
+    // short valid and invalid addresess
+    for(auto address : addresess){
+        if(validEmail(address)){
+            validAddresess.push_back(address);
+        } else if(validateUserName(address)){
+            Contact contact = get_contact(address);
+            if(contact.email != ""){
+                validAddresess.push_back(contact.email);
+            } else {
+                invalidAddresess.push_back(address);
+            }
+        } else {
+            invalidAddresess.push_back(address);
+        }
+    }
+
+    // subject
+    space();
+    std::string subject = askSubject();
+    if(subject == "quit") return;
+
+    // message
+    space();
+    std::string message = askMessage();
+    if(message == "quit") return;
+
+    emailContent content;
+    content.from = currentUser.email;
+    content.pass = emailPass;
+    content.to = validAddresess; // change this to vector in struct
+    content.subject = subject;
+    content.message = message;
+
+
+    // print all valid addresess and invalid addresess
+    std::cout << "Email will be send to all these addresess" << std::endl;
+    space();
+    std::cout << "Valid addresess" << std::endl;
+    for(auto item : validAddresess){
+        std::cout << "+" << item << "+" << std::endl;
+    }
+    space();
+    std::cout << "These were invalid addresses and the email will not be sent to them" << std::endl;
+    space();
+    std::cout << "invalid addresess" << std::endl;
+    for(auto item : invalidAddresess){
+        std::cout << "+" << item << "+" << std::endl;
+    }
+    space();
+
+    std::cout << "Do you want to send the email?" << std::endl;
+    inputLine = askYesOrNo();
+    if(inputLine == "n" || inputLine == "quit") return;
+
+    // lähetä
+    send_email(content);
+
+    return;
+}
+
+// send email if email app password (emailPass) has password
+void datastructures::send_email(emailContent& content){
+    // ask first time to request email app password after log in
+    if(content.pass == ""){
+        std::string temp = askEmailAppPassword(currentUser.username);
+        if(temp == "quit") return;
+
+        emailPass = temp;
+        content.pass = temp;
+        temp.clear();
+    }
+
+    if(!sendEmail(content)){
+        // comment
+        std::cout << "+ Log in failed +" << std::endl;
+    }
 }
 
 void datastructures::create_contact(){
@@ -32,6 +121,13 @@ void datastructures::create_contact(){
 
 Contact datastructures::get_contact(std::string contactName){
     Contact contact;
+    for (auto con : currentUser.contacts){
+        if(con.username == contactName){
+            contact = con;
+            break;
+        }
+    }
+
     return contact;
 }
 
@@ -41,7 +137,9 @@ void datastructures::create_new_user(){
     User newUser;
     std::string inputLine;
     std::string pass;
+    std::string email;
 
+    /*
     std::cout << "Create new user:" << std::endl;
     std::cout << "(type 'quit' to exit creating the new user at any point)" << std::endl;
     std::cout << "Allowed charaters are: " << std::endl;
@@ -51,77 +149,92 @@ void datastructures::create_new_user(){
     space();
     std::cout << "User name must start with letter and can not have two or more '.' or '_' row" << std::endl;
     space();
+    */
 
-    // ask username
-    inputLine = askUserName();
-    if(inputLine == "quit") return;
+    // new user information request
+    // ask username loop
+    while(true){
+        inputLine = askUserName();
+        if(inputLine == "quit") return;
+        if(usernameAlreadyExist(inputLine)) continue;
+
+        break;
+    }
 
     newUser.username = inputLine;
 
-    // ask password
+    // ask password and reask to check if they matches
     inputLine = askPassword(newUser.username);
     if(inputLine == "quit") return;
     pass = inputLine;
-
-    // ask password again and check it matches with previous
     inputLine = reaskPassword(pass);
     if(inputLine == "quit") return;
 
     // hash and salt the password and store password hash and salt
     hashSalt newHashSalt = hash_and_salt_password(pass);
-    pass = "";
     newUser.passwordHash = newHashSalt.hash;
     newUser.passwordSalt = newHashSalt.salt;
 
-    std::cout << "Email: ";
-    while (getline(std::cin, inputLine)){
-        if(inputLine == "quit")return;
+    inputLine.clear();
+    pass.clear();
 
-        if (!validEmail(inputLine)){
-            std::cout << "Invalid email address!" << std::endl;
-        } else {
+    // email, email app password and validation code loop
+    int attemptsLeft = 5;
+    while (true){
+        if(attemptsLeft <= 0){
+            std::cout << "+ Too many attempts! Quiting sign in with new user +" << std::endl;
+            return;
+        }
+
+        std::cout << "++ attemps left: " << attemptsLeft << " ++" << std::endl;
+        attemptsLeft --;
+
+        // ask email loop
+        while(true){
+            inputLine = askEmail();
+            if(inputLine == "quit") return;
+            if(emailAlreadyExist(inputLine)) continue;
+
             break;
         }
-        std::cout << "Email: ";
-    }
+        email = inputLine;
 
-    std::string email = inputLine;
+        // ask email app password
+        inputLine = askEmailAppPassword(newUser.username);
+        if(inputLine == "quit") return;
 
-    while(true){
-        std::cout << "Emails App Password: ";
-        inputLine = passInput();
+        pass = inputLine;
+        std::cout << inputLine << std::endl;
 
-        if(inputLine == "quit")return;
-
-        if(!checkPass(inputLine, newUser.username)){
-        } else {
-            pass = inputLine;
-            break;
+        ReturnStatus status = emailCodeValidation(email, pass);
+        if(status == QUIT){
+            return;
+        } else if(status == AUTHFAIL) {
+            std::cout << "+ Authentication failure! Email and/or emails app password is wrong +" << std::endl;
+            continue;
+        } else if(status == CODEFAIL) {
+            return;
         }
+
+        pass.clear();
+        break;
     }
 
-    // hash and salt the email app password
-    newHashSalt = hash_and_salt_password(pass);
-    newUser.emailPassHash = newHashSalt.hash;
-    newUser.emailPassSalt = newHashSalt.salt;
-
-    if(!emailCodeValidation(email, pass)) return;
-    pass = "";
 
     newUser.email = email;
 
     users.push_back(newUser);
 
     if(saveUsers(USERSFILE, users)){
-        std::cout << " you have succesfully sign in! \n (type 'log_in " << newUser.username << "' if you want to log in)" << std::endl;
+        std::cout << "You have succesfully sign in! \n (type 'log_in " << newUser.username << "' if you want to log in)" << std::endl;
     }
     else {
-        std::cout << " sign in has failed! \n (type 'sign_in' if you want to try again)" << std::endl;
+        std::cout << "Sign in has failed! \n (type 'sign_in' if you want to try again)" << std::endl;
     }
 
 }
 
-// tee
+// tee pasword ainakin
 void datastructures::load_existing_user(std::string usernameOrEmail)
 {
     bool isEmail;
@@ -131,6 +244,7 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
 
     remove_current_user();
 
+    // check if username or email exist
     if (validEmail(usernameOrEmail)){
         isEmail = true;
     } else if (validateUserName(usernameOrEmail)){
@@ -210,10 +324,6 @@ void datastructures::set_current_user(User user){
     currentUser = user;
 }
 
-void datastructures::send_email(){
-
-}
-
 void datastructures::print_email_by_id(){
 
 }
@@ -226,5 +336,74 @@ void datastructures::remove_current_user()
 {
     User user;
     currentUser = user;
+    emailPass.clear();
     pageHeader("WELCOME TO THE MAIL SYSTEM", get_current_user().username);
+}
+
+bool datastructures::usernameAlreadyExist(const std::string& username){
+
+    for (User& user : users) {
+        if (user.username == username){
+            std::cout << "+ Username not accepted. Username already in use. +" << std::endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool datastructures::emailAlreadyExist(const std::string& email){
+    for (User& user : users) {
+        if (user.email == email){
+            std::cout << "+ Email not accepted. Email already in use. +" << std::endl;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool datastructures::isSignIn(){
+    if(currentUser.username == ""){
+        std::cout << "+ User is not log in. +\n+ Log in by 'log_in <username or email>' +\n+ or sign in by 'sign_in' +" << std::endl;
+        return false;
+    }
+    return true;
+}
+
+std::vector<std::string> datastructures::split (const std::string& line, const char& separator){
+    std::string newLine = line;
+    std::vector<std::string> parts;
+    size_t position = 0;
+    std::string part;
+    while((position = newLine.find(separator)) != std::string::npos){
+        part = newLine.substr(0, position);
+        parts.push_back(part);
+        newLine.erase(0, position + 1);
+    }
+    parts.push_back(newLine);
+    return parts;
+}
+
+std::vector<std::string> datastructures::split (const std::string& line, const char& separator, bool ignorWhiteSpace){
+
+    if(ignorWhiteSpace != true){
+        std::vector< std::string > parts = split(line, separator);
+        return parts;
+    } else {
+
+        std::string newLine = line;
+        std::vector<std::string> parts;
+        size_t position = 0;
+        std::string part;
+        while((position = newLine.find(separator)) != std::string::npos){
+            part = newLine.substr(0, position);
+            if(part != ""){
+                parts.push_back(part);
+            }
+            newLine.erase(0, position + 1);
+        }
+        parts.push_back(newLine);
+        return parts;
+    }
 }
