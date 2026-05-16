@@ -101,26 +101,41 @@ void datastructures::create_email(){
 void datastructures::send_email(emailContent& content){
     // ask first time to request email app password after log in
     if(content.pass == ""){
-        std::string temp = askEmailAppPassword(currentUser.username);
+        std::string temp = requestEmailPass();
         if(temp == "quit") return;
-
-        emailPass = temp;
-        content.pass = temp;
         temp.clear();
+
+        content.pass = emailPass;
     }
 
     if(!sendEmail(content)){
-        // comment
         std::cout << "+ Log in failed +" << std::endl;
     }
 }
 
 void datastructures::create_contact(){
+    if(!isSignIn()) return;
 
+    Contact newContact;
+    std::string input;
+
+    // use username logic, may be update function name
+    input = askUserName();
+    if(input == "quit") return;
+    newContact.username = input;
+
+    input = askEmail();
+    if(input == "quit") return;
+    newContact.email = input;
+
+    currentUser.contacts.push_back(newContact);
+    // update database
 }
 
 Contact datastructures::get_contact(std::string contactName){
     Contact contact;
+    if(!isSignIn()) return contact;
+
     for (auto con : currentUser.contacts){
         if(con.username == contactName){
             contact = con;
@@ -131,6 +146,76 @@ Contact datastructures::get_contact(std::string contactName){
     return contact;
 }
 
+void datastructures::update_contact(const std::string& contactName){
+    if(!isSignIn()) return;
+
+    Contact updatedContact;
+    std::string input;
+
+    for(auto& contact : currentUser.contacts){
+        if(contact.username == contactName){
+
+            std::cout << "Do you want to update contact name?" << std::endl;
+            input = askYesOrNo();
+            if(input == "quit") return;
+            if(input == "y"){
+                input = askUserName();
+                if(input == "quit") return;
+                updatedContact.username = input;
+            }
+
+            std::cout << "Do you want to update contact email?" << std::endl;
+            input = askYesOrNo();
+            if(input == "quit") return;
+            if(input == "y"){
+                input = askEmail();
+                if(input == "quit") return;
+                updatedContact.email = input;
+            }
+
+            if(updatedContact.username != ""){
+                contact.username = updatedContact.username;
+            }
+
+            if(updatedContact.email != ""){
+                contact.email = updatedContact.email;
+            }
+
+            break;
+        }
+    }
+
+    // update database
+}
+
+void datastructures::remove_contact(const std::string &contactName){
+    if(!isSignIn()) return;
+
+    auto& contacts = currentUser.contacts;
+
+    for (auto contact = contacts.begin(); contact != contacts.end(); ++contact)
+    {
+        if (contact->username == contactName)
+        {
+            contacts.erase(contact);
+            break;
+        }
+    }
+
+    // update database
+}
+
+void datastructures::print_contacts(){
+    if(!isSignIn()) return;
+
+    for(auto contact : currentUser.contacts){
+        space();
+        std::cout << contact.username << std::endl;
+        std::cout << contact.email << std::endl;
+    }
+
+}
+
 
 // not ready
 void datastructures::create_new_user(){
@@ -139,17 +224,9 @@ void datastructures::create_new_user(){
     std::string pass;
     std::string email;
 
-    /*
     std::cout << "Create new user:" << std::endl;
     std::cout << "(type 'quit' to exit creating the new user at any point)" << std::endl;
-    std::cout << "Allowed charaters are: " << std::endl;
-    std::cout << "  - a-z (upercase and lowercase)" << std::endl;
-    std::cout << "  - 0-9" << std::endl;
-    std::cout << "  - ._" << std::endl;
     space();
-    std::cout << "User name must start with letter and can not have two or more '.' or '_' row" << std::endl;
-    space();
-    */
 
     // new user information request
     // ask username loop
@@ -234,7 +311,7 @@ void datastructures::create_new_user(){
 
 }
 
-// tee pasword ainakin
+
 void datastructures::load_existing_user(std::string usernameOrEmail)
 {
     bool isEmail;
@@ -277,6 +354,11 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
                 break;
             }
         }
+
+        if(userTemp.email != usernameOrEmail){
+            std::cout << " log in has failed! wrong username or password" << std::endl;
+            return;
+        }
     } else {
         for (User& user : users) {
             if (user.username == usernameOrEmail){
@@ -284,8 +366,14 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
                 break;
             }
         }
+
+        if(userTemp.username != usernameOrEmail){
+            std::cout << " log in has failed! wrong username or password" << std::endl;
+            return;
+        }
     }
 
+    /*
     if(isEmail){
         if(userTemp.email != usernameOrEmail){
             std::cout << " log in has failed! wrong username or password" << std::endl;
@@ -296,13 +384,6 @@ void datastructures::load_existing_user(std::string usernameOrEmail)
             std::cout << " log in has failed! wrong username or password" << std::endl;
             return;
         }
-    }
-
-    /*
-    User user = loadUser(USERSFILE, usernameOrEmail, isEmail);
-    if(user.username == ""){
-        std::cout << " log in has failed! wrong username or password" << std::endl;
-        return;
     }
     */
 
@@ -338,6 +419,14 @@ void datastructures::remove_current_user()
     currentUser = user;
     emailPass.clear();
     pageHeader("WELCOME TO THE MAIL SYSTEM", get_current_user().username);
+}
+
+std::string datastructures::requestEmailPass(){
+    std::string input = askEmailAppPassword(currentUser.username);
+    if(input == "quit") return input;
+
+    emailPass = input;
+    return input;
 }
 
 bool datastructures::usernameAlreadyExist(const std::string& username){

@@ -6,8 +6,6 @@ std::vector<Cmd> create_cmds(datastructures& data) {
     static std::string emailidx = "([a-zA-Z0-9-]+)";
     static std::string usernamex = "([a-zA-Z](?!.*[._]{2})[a-zA-Z0-9._]{1,18}[a-zA-Z])";
     static std::string userEmailx = "([a-zA-Z0-9._-]+@(?:[a-z0-9]+(?:-[a-z0-9]+)*\\.)+[a-z]{2,})";
-    //std::string coordx = "\\(([0-9]+),([0-9]+)\\)";
-    //std::string numx = "([0-9]+)";
     static std::string ws = "\\s+";
 
     return{
@@ -23,7 +21,7 @@ std::vector<Cmd> create_cmds(datastructures& data) {
             "send_email",
             std::regex("^send_email"),
             [&](const std::smatch& match){
-                std::cout << "Send message!" << std::endl;
+                std::cout << "Send email!" << std::endl;
                 // run function here
                 data.create_email();
             }
@@ -72,7 +70,7 @@ std::vector<Cmd> create_cmds(datastructures& data) {
             "sign_in",
             std::regex("^sign_in"),
             [&](const std::smatch& match){
-                std::cout << "Sign in new user." << std::endl;
+                std::cout << "Sign in new user" << std::endl;
                 data.create_new_user();
             }
         },
@@ -82,6 +80,38 @@ std::vector<Cmd> create_cmds(datastructures& data) {
             [&](const std::smatch& match){
                 std::cout << "Log out user: " << match[1] << std::endl;
                 data.remove_current_user();
+            }
+        },
+        {
+            "create_contact",
+            std::regex("^create_contact"),
+            [&](const std::smatch& match){
+                std::cout << "Create new contact" << std::endl;
+                data.create_contact();
+            }
+        },
+        {
+            "print_contacts",
+            std::regex("^print_contacts"),
+            [&](const std::smatch& match){
+                std::cout << "Print all contacts" << std::endl;
+                data.print_contacts();
+            }
+        },
+        {
+            "update_contact",
+            std::regex("^update_contact"+ ws + usernamex + "$"),
+            [&](const std::smatch& match){
+                std::cout << "Update contact: " << match[1] << std::endl;
+                data.update_contact(match[1]);
+            }
+        },
+        {
+            "remove_contact",
+            std::regex("^remove_contact"+ ws + usernamex + "$"),
+            [&](const std::smatch& match){
+                std::cout << "Remove contact from cantacts: " << match[1] << std::endl;
+                data.remove_contact(match[1]);
             }
         }
     };

@@ -136,6 +136,7 @@ ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::stri
         return AUTHFAIL;
     }
 
+    // lets user to try validation code for 5 times before exiting
     int attemptsLeft = 5;
     std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
     std::cout << "Validation code: ";
