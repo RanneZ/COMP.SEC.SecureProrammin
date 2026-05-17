@@ -7,13 +7,15 @@ CONFIG += c++17 cmdline
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        Actions.cpp \
         Commands.cpp \
         Cryp.cpp \
-        Datastructures.cpp \
         Email.cpp \
         Input.cpp \
         JsonConverter.cpp \
         SaveAndLoad.cpp \
+        SecureClear.cpp \
+        Split.cpp \
         UI.cpp \
         Validation.cpp \
         main.cpp
@@ -39,14 +41,16 @@ unix {
 DEFINES += CRYPTOPP_ENABLE_NAMESPACE_WEAK
 
 HEADERS += \
+    Actions.h \
     Commands.h \
     Config.h \
     Cryp.h \
     DangerousPasswords.h \
-    Datastructures.h \
     Email.h \
     Input.h \
     JsonConverter.h \
     SaveAndLoad.h \
+    SecureClear.h \
+    Split.h \
     UI.h \
     Validation.h

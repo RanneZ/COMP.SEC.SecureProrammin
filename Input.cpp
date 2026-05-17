@@ -1,7 +1,12 @@
+// AI was used to crete hiddenInput and the getch_wrapper.
+// ChatGPT (GPT-5.5.)
+
 #include "Input.h"
+#include "Validation.h"
+#include "Config.h"
+
 #include <iostream>
 #include <string>
-#include "Validation.h"
 
 #ifdef _WIN32
 #include <conio.h>
@@ -27,7 +32,8 @@ char getch_wrapper() {
 }
 #endif
 
-std::string passInput() {
+// hide the users input covering it with '*' character
+std::string hiddenInput() {
     std::string input;
     char c;
 
@@ -47,92 +53,95 @@ std::string passInput() {
     return input;
 }
 
-std::string askUserName(){
-    std::string line;
+std::string inputUsername(){
+    std::string input;
     std::cout << "Username: ";
 
-    while (getline(std::cin, line)){
-        if (!validateUserName(line)){
+    while (getline(std::cin, input)){
+        if (!validateUserName(input)){
             std::cout << "Invalid username (containe one or more unalowed charater)" << std::endl;
         } else {
             break;
         }
         std::cout << "Username: ";
     }
-    return line;
+    return input;
 }
 
-std::string askPassword(const std::string& username){
-    std::string line;
+std::string inputPassword(const std::string& username){
+    std::string input;
 
     while(true){
         std::cout << "Password: ";
-        line = passInput();
+        input = hiddenInput();
 
-        if(line == "quit")return line;
+        if(input == BACK)return input;
 
-        if(checkPass(line, username)){
+        if(checkPass(input, username)){
             break;
         }
     }
-    return line;
+    return input;
 }
 
-std::string reaskPassword(const std::string& password){
-    std::string line;
+std::string reinputPassword(const std::string& password){
+    std::string input;
 
     while(true){
         std::cout << "Confirm Password: ";
-        line = passInput();
+        input = hiddenInput();
 
-        if(line == "quit")return line;
+        if(input == BACK)return input;
 
-        if(checkPasswordsMatches(password, line)){
+        if(checkPasswordsMatches(password, input)){
             break;
         }
     }
-    return line;
+    return input;
 }
 
 
-std::string askEmail(){
-    std::string line;
+std::string inputEmail(){
+    std::string input;
     std::cout << "Email: ";
 
-    while (getline(std::cin, line)){
-        if(line == "quit")return line;
+    while (getline(std::cin, input)){
+        if(input == BACK)return input;
 
-        if (!validEmail(line)){
+        if (!validEmail(input)){
             std::cout << "Invalid email address!" << std::endl;
         } else {
             break;
         }
         std::cout << "Email: ";
     }
-    return line;
+    return input;
 }
 
-std::string askEmailAppPassword(const std::string& username){
-    std::string line;
+std::string inputEmailAppPassword(const std::string& username){
+    std::string input;
 
     while(true){
         std::cout << "Emails App Password: ";
-        line = passInput();
+        input = hiddenInput();
 
-        if(line == "quit")return line;
+        if(input == BACK)return input;
 
-        if(checkPass(line, username)){
+        if(checkPass(input, username)){
             break;
         }
     }
-    return line;
+    return input;
 }
 
-std::string askSubject(){
+std::string inputSubject(){
     std::string line;
     std::cout << "Subject: ";
 
     while (getline(std::cin, line)){
+
+        if(line == BACK)return line;
+
         if (!validateSubject(line)){
             std::cout << "Subject conteins ilegal characters like:" << std::endl;
             std::cout << "All control characters \\x00-\\x1F, DEL (\\x7F)," << std::endl;
@@ -146,11 +155,14 @@ std::string askSubject(){
 
 }
 
-std::string askMessage(){
+std::string inputMessage(){
     std::string line;
     std::cout << "Message: ";
 
     while (getline(std::cin, line)){
+
+        if(line == BACK)return line;
+
         if (!validateMessage(line)){
             std::cout << "Message too long or conteins '\0' " << std::endl;
         } else {
@@ -161,21 +173,21 @@ std::string askMessage(){
     return line;
 }
 
-std::string askYesOrNo(){
-    std::string line;
+std::string inputYesOrNo(){
+    std::string input;
     std::cout << "y/n: ";
 
-    while (getline(std::cin, line)){
-        if (line == "y"){
+    while (getline(std::cin, input)){
+        if (input == "y"){
             break;
-        } else if (line == "n") {
+        } else if (input == "n") {
             break;
-        } else if (line == "quit"){
+        } else if (input == BACK){
             break;
         }
         std::cout << "Not valid answer type 'y' or 'n' ";
         std::cout << "y/n: ";
     }
-    return line;
+    return input;
 
 }

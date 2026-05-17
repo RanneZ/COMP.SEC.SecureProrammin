@@ -1,7 +1,12 @@
+// This is gennerated by AI.
+// ChatGPT (GPT-5.5.)
+
 #ifndef JSONCONVERTER_H
 #define JSONCONVERTER_H
-#include <optional>
+
 #include "json.hpp"
+
+#include <optional>
 
 template<typename T>
 void to_json(nlohmann::json &j, const std::optional<T> &s)

@@ -2,7 +2,6 @@
 #define VALIDATION_H
 
 #include <string>
-#include "Email.h"
 
 enum ReturnStatus {
     AUTHFAIL,

@@ -1,24 +1,8 @@
-#include "JsonConverter.h"
-#include "Datastructures.h"
-/*
-void to_json(nlohmann::json& j, const Message& m) {
-    j = nlohmann::json{
-        {"sender", m.sender},
-        {"recipients", m.recipients},
-        {"subject", m.subject},
-        {"body", m.body},
-        {"timestamp", m.timestamp}
-    };
-}
+// This is gennerated by AI.
+// ChatGPT (GPT-5.5.)
 
-void from_json(const nlohmann::json& j, Message& m) {
-    m.sender = j.value("sender", "");
-    m.recipients = j.value("recipients", std::vector<std::string>{});
-    m.subject = j.value("subject", "");
-    m.body = j.value("body", "");
-    m.timestamp = j.value("timestamp", 0);
-}
-*/
+#include "JsonConverter.h"
+#include "Actions.h"
 
 void to_json(nlohmann::json& j, const Contact& c) {
     j = nlohmann::json{
@@ -36,12 +20,8 @@ void to_json(nlohmann::json& j, const User& u) {
     j = nlohmann::json{
         {"username", u.username},
         {"email", u.email},
-        //{"emailPassHash", u.emailPassHash},
-        //{"emailPassSalt", u.emailPassSalt},
         {"passwordHash", u.passwordHash},
         {"passwordSalt", u.passwordSalt},
-        //{"inbox", u.inbox},
-        //{"sent", u.sent},
         {"contacts", u.contacts}
     };
 }
@@ -49,11 +29,7 @@ void to_json(nlohmann::json& j, const User& u) {
 void from_json(const nlohmann::json& j, User& u) {
     u.username = j.value("username", "");
     u.email = j.value("email", "");
-    //u.emailPassHash = j.value("emailPassHash", "");
-    //u.emailPassSalt = j.value("emailPassSalt", "");
     u.passwordHash = j.value("passwordHash", "");
     u.passwordSalt = j.value("passwordSalt", "");
-    //u.inbox = j.value("inbox", std::vector<Message>{});
-    //u.sent = j.value("sent", std::vector<Message>{});
     u.contacts = j.value("contacts", std::vector<Contact>{});
 }

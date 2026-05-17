@@ -1,4 +1,9 @@
+// AI assistance was used extensively during the development of the SMTP workflow,
+// particularly for understanding protocol structure.
+// ChatGPT (GPT-5.5.)
+
 #include "Email.h"
+
 #include <iostream>
 
 bool sendEmail(const emailContent& content){
@@ -70,11 +75,9 @@ bool sendEmail(const emailContent& content){
     socket.close();
 
     return true;
-
 }
 
 std::string sendCommand(QSslSocket& socket, const std::string& command){
-    std::cout << "CLIENT: " << command << std::endl;
     QString qCommand = QString::fromStdString(command);
 
     socket.write(qCommand.toUtf8() + "\r\n");
@@ -83,8 +86,5 @@ std::string sendCommand(QSslSocket& socket, const std::string& command){
 
     QByteArray response = socket.readAll();
     std::string responseStr = response.toStdString();
-
-    std::cout << "SERVER: " << response.toStdString() << std::endl;
-
     return responseStr;
 }

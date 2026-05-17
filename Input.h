@@ -2,14 +2,15 @@
 #define INPUT_H
 
 #include <string>
-std::string passInput();
-std::string askUserName();
-std::string askPassword(const std::string& username);
-std::string reaskPassword(const std::string& password);
-std::string askEmail();
-std::string askEmailAppPassword(const std::string& username);
-std::string askSubject();
-std::string askMessage();
-std::string askYesOrNo();
+
+std::string hiddenInput();
+std::string inputUsername();
+std::string inputPassword(const std::string& username);
+std::string reinputPassword(const std::string& password);
+std::string inputEmail();
+std::string inputEmailAppPassword(const std::string& username);
+std::string inputSubject();
+std::string inputMessage();
+std::string inputYesOrNo();
 
 #endif // INPUT_H

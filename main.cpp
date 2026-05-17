@@ -1,26 +1,28 @@
-#include <iostream>
-#include <string>
 #include "UI.h"
 #include "Commands.h"
-#include "Datastructures.h"
+#include "Actions.h"
+#include "Config.h"
+
+#include <iostream>
+#include <string>
 
 int main(){
 
     try{
         std::cout << "\033[0m";
-        auto data = datastructures();
-        auto cmds = create_cmds(data);
+        auto act = Actions();
+        auto cmds = createCmds(act);
 
         std::string pageTitle = "WELCOME TO THE MAIL SYSTEM";
-        pageHeader(pageTitle, data.get_current_user().username);
+        pageHeader(pageTitle, act.getCurrentUser().username, "");
 
         std::string line;
-        std::cout << "Enter command (type 'quit' to exit)" << std::endl;
+        std::cout << "Enter command (type 'exit' to exit or 'help' to see list of commands)" << std::endl;
 
         while (getline(std::cin, line)){
-            pageHeader(pageTitle, data.get_current_user().username);
+            pageHeader(pageTitle, act.getCurrentUser().username, "");
 
-            if (line == "quit") break;
+            if (line == EXIT) break;
 
             bool matched = false;
 

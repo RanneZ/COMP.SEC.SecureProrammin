@@ -6,9 +6,8 @@
     void cursor();
     void separator();
     void margin();
-    void version();
     void date();
     void space();
-    void pageHeader(const std::string& pageTitle, const std::string& username);
+    void pageHeader(const std::string& pageTitle, const std::string& username, const std::string& message);
 
 #endif // UI_H

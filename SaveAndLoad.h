@@ -1,8 +1,13 @@
+// This is gennerated by AI.
+// ChatGPT (GPT-5.5.)
+
 #ifndef SAVEANDLOAD_H
 #define SAVEANDLOAD_H
+
+#include "Actions.h"
+
 #include <string>
 #include <vector>
-#include "Datastructures.h"
 
 bool saveUser(const std::string& fileName, User& user);
 User loadUser(const std::string& fileName, std::string& username, bool isEmail);

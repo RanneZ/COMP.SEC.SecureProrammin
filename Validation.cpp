@@ -1,9 +1,13 @@
 #include "Validation.h"
 #include "DangerousPasswords.h"
+#include "Cryp.h"
+#include "Email.h"
+#include "Config.h"
+
 #include <unordered_set>
 #include <iostream>
-#include "Cryp.h"
 #include <regex>
+
 
 bool validateUserName(const std::string &username){
     std::regex pattern("^[a-zA-Z](?!.*[._]{2})[a-zA-Z0-9._]{1,18}[a-zA-Z]$");
@@ -56,7 +60,7 @@ bool validate6DigitCode(const std::string& code){
 bool checkPassLength(const std::string& password){
     // check if password is too short or too long
     if (password.length() < 8 || password.length() > 64){
-        std::cout << "WARNING: Password is less than 8 characters long or longer than 64 characters !" << std::endl;
+        std::cout << "WARNING: Password is less than 8 characters long or longer than 64 characters!" << std::endl;
         return false;
     }
     return true;
@@ -72,7 +76,7 @@ bool checkPassList(std::string password){
     // check if hash password exist in dangerous password list
     const auto& dangerousList = getDangerousPasswords();
     if(dangerousList.find(hashPass) != dangerousList.end()){
-        std::cout << "WARNING: Password exist in OWASP dangerous password list!" << std::endl;
+        std::cout << "WARNING: Password exist in OWASP dangerous password list. this is security risk!" << std::endl;
         return false;
     }
     return true;
@@ -118,7 +122,7 @@ bool checkPass(const std::string& password, const std::string& username){
 ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::string& emailPass){
 
     std::string code = random6NumberCode();
-    std::string line;
+    std::string input;
     std::vector<std::string> to;
     to.push_back(emailAddres);
 
@@ -130,9 +134,8 @@ ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::stri
     content.subject = "Mail system validation code";
     content.message = "Here is the validation code \n\n"+ code;
 
+    // if email smtp auth faile return authfail
     if(!sendEmail(content)){
-        // comment
-        //std::cout << "+ Log in failed +" << std::endl;
         return AUTHFAIL;
     }
 
@@ -140,16 +143,15 @@ ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::stri
     int attemptsLeft = 5;
     std::cout << "Check your given email inbox. There should be \nEmail that have 6 number code" << std::endl;
     std::cout << "Validation code: ";
-    while (getline(std::cin, line)){
-        if(line == "quit")return QUIT;
+    while (getline(std::cin, input)){
+        if(input == BACK)return QUIT;
 
-        if (!validate6DigitCode(line)){
+        if (!validate6DigitCode(input)){
             std::cout << "Wrong amount digits \n code is 6 digit long" << std::endl;
         } else {
-            if (line != code){
+            if (input != code){
                 attemptsLeft = attemptsLeft - 1;
                 if(attemptsLeft <= 0){
-                    std::cout << "Too many attempts! exiting Sign in" << std::endl;
                     return CODEFAIL;
                 }
                 std::cout << "Invalid validation code! "<< attemptsLeft <<" attempts remaining" << std::endl;
@@ -165,7 +167,7 @@ ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::stri
 
 bool checkPasswordsMatches(const std::string &password, const std::string &repassword){
     if (password == repassword) return true;
-    std::cout << "Confirm password do not match with password!" << std::endl;
+    std::cout << "Passwords do not match with each other!" << std::endl;
     return false;
 }
 

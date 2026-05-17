@@ -1,6 +1,10 @@
+// This is gennerated by AI.
+// ChatGPT (GPT-5.5.)
+
 #include "SaveAndLoad.h"
 #include "JsonConverter.h"
-#include "Datastructures.h"
+#include "Actions.h"
+
 #include <fstream>
 
 bool saveUser(const std::string& fileName, User& user){

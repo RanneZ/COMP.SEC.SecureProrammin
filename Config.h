@@ -3,7 +3,8 @@
 
 #include <string>
 
-inline const std::string VERSION = "v.0.0.2.alpha";
 inline const std::string USERSFILE = "users.txt";
+inline const std::string EXIT = "exit";
+inline const std::string BACK = "back";
 
 #endif // CONFIG_H

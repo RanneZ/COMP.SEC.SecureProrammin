@@ -1,16 +1,18 @@
 #include "Cryp.h"
+
 #include <cryptopp/osrng.h>
 #include <cryptopp/sha.h>
 #include <cryptopp/hex.h>
 #include <cryptopp/filters.h>
 
-hashSalt hash_and_salt_password(std::string password){
+hashSalt hashAndSaltPassword(std::string password){
 
-    // salting
+    // generate salt
     CryptoPP::AutoSeededRandomPool rng;
     CryptoPP::byte saltBytes[16];
     rng.GenerateBlock(saltBytes, sizeof(saltBytes));
 
+    // salting
     std::string salt;
     CryptoPP::StringSource(saltBytes, sizeof(saltBytes), true, new CryptoPP::HexEncoder(new CryptoPP::StringSink(salt)));
     std::string passSalt = password+salt;
@@ -29,12 +31,13 @@ hashSalt hash_and_salt_password(std::string password){
 
 bool authenticate(std::string inputPassword, hashSalt hashAndSalt){
 
+    // salting and hashing the input
     std::string inputHash;
     std::string inputPassSalt = inputPassword + hashAndSalt.salt;
-
     CryptoPP::SHA256 sha;
     CryptoPP::StringSource(inputPassSalt, true, new CryptoPP::HashFilter(sha, new CryptoPP::HexEncoder(new CryptoPP::StringSink(inputHash))));
 
+    // check if passwords macth
     if(hashAndSalt.hash == inputHash){
         return true;
     } else {
@@ -43,6 +46,7 @@ bool authenticate(std::string inputPassword, hashSalt hashAndSalt){
 }
 
 std::string random6NumberCode(){
+    // generate random data
     CryptoPP::AutoSeededRandomPool rng;
     std::string code = "";
 
@@ -56,8 +60,7 @@ std::string random6NumberCode(){
     return code;
 }
 
-std::string hashString(std::string string)
-{
+std::string hashString(std::string string){
     // hashing the string
     std::string hash;
     CryptoPP::SHA256 sha;
