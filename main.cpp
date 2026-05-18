@@ -9,8 +9,13 @@
 int main(){
 
     try{
+        // change console print color to defoult
         std::cout << "\033[0m";
+
+        // create actions
         auto act = Actions();
+
+        // create commands
         auto cmds = createCmds(act);
 
         std::string pageTitle = "WELCOME TO THE MAIL SYSTEM";
@@ -19,6 +24,7 @@ int main(){
         std::string line;
         std::cout << "Enter command (type 'exit' to exit or 'help' to see list of commands)" << std::endl;
 
+        // main loop
         while (getline(std::cin, line)){
             pageHeader(pageTitle, act.getCurrentUser().username, "");
 
@@ -40,11 +46,15 @@ int main(){
             }
         }
 
+        // change console print color to defoult
         std::cout << "\033[0m";
         system("cls");
         return 0;
 
     } catch (const std::exception& e) {
+        // change console print color to defoult
+        std::cout << "\033[0m";
+
         std::cerr << "Fatal error: " << e.what() << std::endl;
         return 1;
     }

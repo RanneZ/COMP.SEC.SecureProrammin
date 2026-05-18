@@ -11,14 +11,18 @@
 #include <QString>
 
 struct emailContent{
-    std::string from;
-    std::string pass;
-    std::vector<std::string> to;
+    std::string from; // sender
+    std::string pass; // email app password
+    std::vector<std::string> to; // recipient(s)
     std::string subject;
     std::string message;
 };
 
+// try to send email content
+// and return true if success
 bool sendEmail(const emailContent& items);
+
+// send command to the socket and returns responce
 std::string sendCommand(QSslSocket& socket, const std::string& command);
 
 #endif // EMAIL_H

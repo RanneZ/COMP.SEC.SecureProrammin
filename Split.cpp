@@ -1,5 +1,7 @@
 #include "Split.h"
 
+// made in programming 2 course
+
 std::vector<std::string> split(const std::string &line, const char &separator){
 
     std::string newLine = line;

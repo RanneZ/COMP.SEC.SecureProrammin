@@ -14,6 +14,7 @@ struct Cmd {
     std::function<void(const std::smatch&)> handler;
 };
 
+// create Commands
 std::vector<Cmd> createCmds(Actions& act);
 
 #endif // COMMANDS_H

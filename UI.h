@@ -3,11 +3,13 @@
 
 #include <string>
 
-    void cursor();
+    // print separator line
     void separator();
-    void margin();
-    void date();
+
+    // print space
     void space();
+
+    // print page header and some mesage if have one
     void pageHeader(const std::string& pageTitle, const std::string& username, const std::string& message);
 
 #endif // UI_H

@@ -45,12 +45,14 @@ bool validateSubject(const std::string& subject){
 }
 
 bool validateMessage(const std::string& message){
+    // make sure message is not too long and dosent contain \0 symboles
     if(message.size() > 10000) return false;
 
     return message.find('\0') == std::string::npos;
 }
 
 bool validate6DigitCode(const std::string& code){
+    // make sure there is 6 number and they are all 0-9
     std::regex pattern("^[0-9]{6}");
     if(!std::regex_match(code, pattern)) return false;
 
@@ -121,8 +123,12 @@ bool checkPass(const std::string& password, const std::string& username){
 
 ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::string& emailPass){
 
+    // crate code
     std::string code = random6NumberCode();
+
     std::string input;
+
+    // add email address to 'to' (recipient)
     std::vector<std::string> to;
     to.push_back(emailAddres);
 
@@ -165,6 +171,8 @@ ReturnStatus emailCodeValidation(const std::string& emailAddres, const std::stri
     return SUCCESS;
 }
 
+// you get it!
+// check if two password match
 bool checkPasswordsMatches(const std::string &password, const std::string &repassword){
     if (password == repassword) return true;
     std::cout << "Passwords do not match with each other!" << std::endl;

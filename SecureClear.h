@@ -6,6 +6,7 @@
 
 #include <string>
 
+// securly overwrite the string and then relese it
 void stringSecureClear(std::string& string);
 
 #endif // SECURECLEAR_H

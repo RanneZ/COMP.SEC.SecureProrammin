@@ -114,8 +114,13 @@ public:
     // if success updates email and save changes
     void changeEmailAddress();
 
+    // log out the user and if emailPass is not empty clear it
     void logOutUser();
 
+    // print current users informations
+    // username
+    // email
+    // and all the contacts in contacts list
     void printUserInfo();
 
     // GETTER //
@@ -124,18 +129,38 @@ public:
 private:
     std::vector<User> users;
     User currentUser;
+
+    // hold users email app password until log out or app closes
     std::string emailPass;
 
+    // print all the contacts informations
+    // name and email
+    // used by printUserInfo and printJustContacts
     void printContacts();
+
+    // prepare the email before sending it
     void prepareEmail(emailContent& content);
+
+    // handle email app password request
     std::string requestEmailPass();
+
+    // check if username already in use
     bool usernameAlreadyExist(const std::string& username);
+
+    // check if email already in use
     bool emailAlreadyExist(const std::string& email);
+
+    // check if user is logget in
     bool isLogIn();
 
+    // update changes is current user to users and save it
     void updateUsers();
 
+    // handle action exit prints
     void exitAction(const std::string& message);
+
+    // check if input is 'back'
+    // if it is then exit action
     bool inputIsBack(std::string input);
 };
 

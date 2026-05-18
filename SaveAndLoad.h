@@ -9,12 +9,10 @@
 #include <string>
 #include <vector>
 
-bool saveUser(const std::string& fileName, User& user);
-User loadUser(const std::string& fileName, std::string& username, bool isEmail);
-User loadUserByUsername(const std::string& fileName, std::string& username);
-User loadUserByEmail(const std::string& fileName, std::string& emailAddres);
-
+// save users to the 'database' (fansy name for txt file)
 bool saveUsers(const std::string& fileName, const std::vector<User>& users);
+
+// load users from the 'database' (fansy name for txt file) and returns it
 std::vector<User> loadUsers(const std::string& fileName);
 
 

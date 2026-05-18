@@ -3,24 +3,22 @@
 #include <iostream>
 #include <string>
 
-void cursor(){ std::cout << ">>> "; }
-
+// make line
 void separator(){
     std::cout << "============================================================" << std::endl;
 }
 
-void margin(){ std::cout << "     "; }
-
-void date(){
-    std::cout << "                                                  00.00.0000" << std::endl;
-}
-
+// make space
 void space(){ std::cout << "\n\n"; }
 
+// print current user name
 void currentuser(std::string username){
     std::cout << username << std::endl;
 }
 
+// print header
+// print username if user is log in
+// print message if message is not empty
 void pageHeader(const std::string& pageTitle, const std::string& username, const std::string& message){
     system("cls");
     if(username != "")currentuser(username);
