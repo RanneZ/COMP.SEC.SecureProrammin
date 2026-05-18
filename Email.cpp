@@ -22,7 +22,7 @@ bool sendEmail(const emailContent& content){
     socket.waitForReadyRead();
 
     QByteArray response = socket.readAll();
-    std::cout << response.toStdString() << std::endl;
+    //std::cout << response.toStdString() << std::endl;
 
     // smtp servise commands
 

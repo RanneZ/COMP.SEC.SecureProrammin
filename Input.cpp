@@ -122,7 +122,7 @@ std::string inputEmailAppPassword(const std::string& username){
     std::string input;
 
     while(true){
-        std::cout << "Emails App Password: ";
+        std::cout << "Email App Password: ";
         input = hiddenInput();
 
         if(input == BACK)return input;

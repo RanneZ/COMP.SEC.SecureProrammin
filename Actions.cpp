@@ -232,7 +232,6 @@ void Actions::printJustContacts(){
 //////////////////////////////////////////////////////////////////////
 
 
-// not ready
 void Actions::createNewUser(){
     User newUser;
     std::string input;
@@ -296,7 +295,6 @@ void Actions::createNewUser(){
         if(inputIsBack(input)) return;
 
         pass = input;
-        std::cout << input << std::endl;
 
         ReturnStatus status = emailCodeValidation(email, pass);
         if(status == QUIT){
@@ -515,9 +513,44 @@ void Actions::changeEmailAddress(){
         }
         break;
     }
+    std::cout << "Validation code accepted from old email" << std::endl;
+    std::cout << "Give new emails app password and then validation code" << std::endl;
+
+
+    attemptsLeft = 5;
+    while (true){
+        if(attemptsLeft <= 0){
+            exitAction("Too many attempts! Quiting change email address");
+            return;
+        }
+
+        std::cout << "++ attemps left: " << attemptsLeft << " ++" << std::endl;
+        attemptsLeft --;
+
+        pass = requestEmailPass();
+
+        ReturnStatus status = emailCodeValidation(input, pass);
+        if(status == QUIT){
+            exitAction("");
+            return;
+        } else if(status == AUTHFAIL) {
+            std::cout << "+ Authentication failure! Email and/or emails app password is wrong +" << std::endl;
+            continue;
+        } else if(status == CODEFAIL) {
+            exitAction("Too many attempts! Quiting change email address");
+            return;
+        }
+
+        if(emailPass == ""){
+            emailPass = pass;
+        }
+        break;
+    }
+
 
     stringSecureClear(pass);
 
+    currentUser.email = input;
     // update database
     updateUsers();
 
