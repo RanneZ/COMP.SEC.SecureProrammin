@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "Cryp.h"
 #include "Config.h"
-#include "split.h"
+#include "Split.h"
 #include "SecureClear.h"
 
 #include <iostream>
