@@ -5,8 +5,14 @@
 
 #include <iostream>
 #include <string>
+#include <QCoreApplication>
 
-int main(){
+int main(int argc, char *argv[]){
+
+    // Force the app to look for plugins right next to the .exe
+    // (desperate fix i know but it works)
+    QCoreApplication::addLibraryPath(".");
+    qputenv("QT_SSL_BACKEND", "schannel");
 
     try{
         // change console print color to defoult

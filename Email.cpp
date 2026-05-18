@@ -79,6 +79,7 @@ bool sendEmail(const emailContent& content){
 
 std::string sendCommand(QSslSocket& socket, const std::string& command){
     QString qCommand = QString::fromStdString(command);
+    //std::cout << command << std::endl;
 
     socket.write(qCommand.toUtf8() + "\r\n");
     socket.waitForBytesWritten();
@@ -86,5 +87,7 @@ std::string sendCommand(QSslSocket& socket, const std::string& command){
 
     QByteArray response = socket.readAll();
     std::string responseStr = response.toStdString();
+
+    //std::cout << responseStr << std::endl;
     return responseStr;
 }
