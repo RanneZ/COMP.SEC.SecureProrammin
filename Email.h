@@ -1,3 +1,7 @@
+// AI assistance was used extensively during the development of the SMTP workflow,
+// particularly for understanding protocol structure.
+// ChatGPT (GPT-5.5.)
+
 #ifndef EMAIL_H
 #define EMAIL_H
 
