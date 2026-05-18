@@ -76,7 +76,7 @@ std::vector<Cmd> createCmds(Actions& actions) {
         },
         {
             "update_contact",
-            std::regex("^update_contact$"+ ws + usernamex + "$"),
+            std::regex("^update_contact"+ ws + usernamex + "$"),
             [&](const std::smatch& match){
                 std::cout << "Update contact: " << match[1] << std::endl;
                 actions.updateContact(match[1]);
@@ -84,7 +84,7 @@ std::vector<Cmd> createCmds(Actions& actions) {
         },
         {
             "remove_contact",
-            std::regex("^remove_contact$"+ ws + usernamex + "$"),
+            std::regex("^remove_contact"+ ws + usernamex + "$"),
             [&](const std::smatch& match){
                 std::cout << "Remove contact from cantacts: " << match[1] << std::endl;
                 actions.removeContact(match[1]);
